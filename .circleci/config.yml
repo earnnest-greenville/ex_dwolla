@@ -8,5 +8,4 @@ jobs:
     steps:
       - checkout
       - run: mix deps.get
-      - run: mix ecto.create
       - run: mix test
