@@ -38,7 +38,6 @@ jobs:
           paths: "_build"
 
       - run: mix deps.get
-      - run: mix test
       - run: mix coveralls.circle
 
       - store_test_results:
