@@ -1,5 +1,8 @@
 # ExDwolla
 
+[![CircleCI](https://circleci.com/gh/CrshOverride/ex_dwolla.svg?style=svg)](https://circleci.com/gh/CrshOverride/ex_dwolla)
+[![Coverage Status](https://coveralls.io/repos/github/CrshOverride/ex_dwolla/badge.svg)](https://coveralls.io/github/CrshOverride/ex_dwolla)
+
 **TODO: Add description**
 
 ## Installation
