@@ -28,6 +28,7 @@ defmodule ExDwolla.MixProject do
   defp deps do
     [
       {:jason, "~> 1.1"},
+      {:junit_formatter, "~> 3.0", only: :test},
       {:mojito, "~> 0.4.0"},
       {:uuid, "~> 1.1"},
       {:excoveralls, "~> 0.10", only: :test},
