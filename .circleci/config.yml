@@ -39,6 +39,7 @@ jobs:
 
       - run: mix deps.get
       - run: mix test
+      - run: mix coveralls.circle
 
       - store_test_results:
           path: _build/test/lib/ex_dwolla
