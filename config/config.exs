@@ -2,7 +2,7 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :ex_dwolla, :http_client, Mojito
+config :ex_dwolla, :http_client, :httpc
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
