@@ -70,11 +70,11 @@ defmodule ExDwolla.Core do
 
   defp base_headers(:post, token, token_type, domain) do
     [
+      {"host", domain}
       {"Content-Type", "application/vnd.dwolla.v1.hal+json"},
       {"Accept", "application/vnd.dwolla.v1.hal+json"},
       {"Authorization", "#{token_type} #{token}"},
       {"Idempotency-Key", UUID.uuid4()},
-      {"host", domain}
     ]
   end
 
