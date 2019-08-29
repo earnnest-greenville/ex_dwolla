@@ -1,17 +1,17 @@
 defmodule ExDwolla.TestHttpClient do
   @moduledoc false
 
-  def request(method: :post, url: "https://accounts-sandbox.dwolla.com/token", headers: _headers, body: _body) do
+  def request(:post, {'https://accounts-sandbox.dwolla.com/token', _headers, _content_type, _body}, _http_opts, []) do
     {:ok, body} = Jason.encode(%{access_token: "abc", expires_in: 3160, token_type: "test"})
-    {:ok, %Mojito.Response{body: body}}
+    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 
-  def request(method: :get, url: "https://api-sandbox.dwolla.com/", headers: _headers, body: _body) do
+  def request(:get, {'https://api-sandbox.dwolla.com/', _headers}, _http_opts, []) do
     {:ok, body} = Jason.encode(%{_links: %{account: %{href: "https://api-sandbox.dwolla.com/accounts/some_id"}}})
-    {:ok, %Mojito.Response{body: body, status_code: 200}}
+    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 
-  def request(method: :get, url: "https://api-sandbox.dwolla.com/accounts/some_account_id", headers: _headers, body: _body) do
+  def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id', _headers}, _http_opts, []) do
     data = %{
       _links: %{
         self: %{
@@ -23,18 +23,19 @@ defmodule ExDwolla.TestHttpClient do
     }
 
     {:ok, body} = Jason.encode(data)
-    {:ok, %Mojito.Response{body: body, status_code: 200}}
+    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 
-  def request(method: :post, url: "https://api-sandbox.dwolla.com/funding-sources", headers: _headers, body: "{\"accountNumber\":\"1\",\"bankAccountType\":\"checking\",\"routingNumber\":\"1\"}") do
-    {:ok, %Mojito.Response{
-      body: "",
-      status_code: 201,
-      headers: [{"location", "https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id"}]
-    }}
+  def request(
+    :post,
+    {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type, '{"accountNumber":"1","bankAccountType":"checking","routingNumber":"1"}'},
+    _http_opts,
+    []
+  ) do
+    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ''}}
   end
 
-  def request(method: :get, url: "https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false", headers: _headers, body: _body) do
+  def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false', _headers}, _http_opts, []) do
     data = %{
       "_links" => %{
         "self" => %{
@@ -63,6 +64,6 @@ defmodule ExDwolla.TestHttpClient do
     }
 
     {:ok, body} = Jason.encode(data)
-    {:ok, %Mojito.Response{body: body, status_code: 200}}
+    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 end

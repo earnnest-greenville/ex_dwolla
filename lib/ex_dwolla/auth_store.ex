@@ -50,19 +50,20 @@ defmodule ExDwolla.AuthStore do
 
   defp refresh_access_token(%__MODULE__{environment: environment, key: key, secret: secret} = state) do
     domain = Utils.base_auth_domain(environment)
+    url = 'https://' ++ to_charlist(domain) ++ '/token'
 
     credentials = Base.encode64("#{key}:#{secret}")
     headers = [
-      {"Content-Type", "application/x-www-form-urlencoded"},
-      {"Authorization", "Basic #{credentials}"}
+      {'Content-Type', 'application/x-www-form-urlencoded'},
+      {'Authorization', 'Basic ' ++ to_charlist(credentials)}
     ]
 
-    with {:ok, %Mojito.Response{body: body}} <- Application.http_client.request(
-                                                  method: :post,
-                                                  url: "https://" <> domain <> "/token",
-                                                  headers: headers,
-                                                  body: "grant_type=client_credentials"
-                                                ),
+    with {:ok, {{_, 200, _status}, _headers, body}} = Application.http_client.request(
+      :post,
+      {url, headers, 'application/x-www-form-urlencoded', 'grant_type=client_credentials'},
+      [],
+      []
+    ),
          {:ok, %{"access_token" => access_token, "expires_in" => expires_in, "token_type" => token_type}} <- Jason.decode(body)
     do
       {:ok, {%__MODULE__{state | access_token: access_token, access_token_type: token_type}, expires_in}}

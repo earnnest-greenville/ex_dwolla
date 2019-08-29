@@ -5,11 +5,11 @@ defmodule ExDwolla.Core do
   alias ExDwolla.Application
   alias ExDwolla.Utils
 
-  def base_request(method, url_or_path, headers, data \\ "", attempts \\ 5)
+  def base_request(method, url_or_path, headers, data \\ "", attempts \\ 5, content_type \\ "application/x-www-form-urlencoded")
 
-  def base_request(_, _, _, _, 0), do: {:error, "Exhausted Dwolla request retry attempts"}
+  def base_request(_, _, _, _, 0, _), do: {:error, "Exhausted Dwolla request retry attempts"}
 
-  def base_request(method, url_or_path, headers, data, attempts) when is_map(data) do
+  def base_request(method, url_or_path, headers, data, attempts, content_type) when is_map(data) do
     encoded = data
     |> Utils.recase(:camel)
     |> Utils.strip_nils()
@@ -17,36 +17,37 @@ defmodule ExDwolla.Core do
     |> Jason.encode()
 
     case encoded do
-      {:ok, body} -> base_request(method, url_or_path, headers, body, attempts)
+      {:ok, body} -> base_request(method, url_or_path, headers, body, attempts, content_type)
       _ -> {:error, "Unable to convert data to JSON text"}
     end
   end
 
-  def base_request(method, url_or_path, headers, body, attempts) when is_bitstring(body) do
+  def base_request(method, url_or_path, headers, body, attempts, content_type) when is_bitstring(body) do
     environment = AuthStore.get_environment()
     %{token: token, token_type: token_type} =  AuthStore.get_token()
     domain = Utils.base_api_domain(environment)
     base_headers = base_headers(method, token, token_type)
     url = build_url!(domain, url_or_path)
 
-    r = Application.http_client.request(method: method, url: url, headers: base_headers ++ headers, body: body)
+    r = perform_request(method, url, base_headers ++ headers, body, content_type)
 
     case r do
-      {:ok, %Mojito.Response{body: "", headers: headers, status_code: 201}} -> {:ok, %{}, headers}
-      {:ok, %Mojito.Response{body: body, headers: headers, status_code: 200}} ->
-        snaked = body |> Jason.decode!() |> Utils.recase(:snake)
+      {:ok, {{_, 201, _}, headers, ''}} -> {:ok, %{}, Utils.to_strings(headers)}
+      {:ok, {{_, 200, _}, headers, body}} ->
+        snaked = body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:ok, snaked, headers}
-      {:ok, %Mojito.Response{body: body, status_code: status_code}} ->
+      {:ok, {{_, status_code, _}, _headers, body}} ->
         Logger.debug("Got response_code from Dwolla: #{status_code}.")
-        snaked = body |> Jason.decode!() |> Utils.recase(:snake)
+        snaked = body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:error, {status_code, snaked}}
-      {:error, %Mojito.Error{reason: :timeout}} ->
-          base_request(method, url_or_path, headers, body, attempts - 1)
-      {:error, error} -> {:error, error}
+      {:error, {:failed_connect, _}} ->
+        Logger.debug("Failed to connect, retrying #{attempts - 1} more times.")
+        base_request(method, url_or_path, headers, body, attempts - 1)
+      {:error, reason} -> {:error, reason}
     end
   end
 
-  def base_request(_, _, _, _, _), do: {:error, "Unsupported data type specified for request"}
+  def base_request(_, _, _, _, _, _), do: {:error, "Unsupported data type specified for request"}
 
   def get_request(path) do
     case base_request(:get, path, []) do
@@ -93,4 +94,16 @@ defmodule ExDwolla.Core do
   defp build_url!(domain, "/" <> _rest = path), do: "https://" <> domain <> path
 
   defp build_url!(domain, path), do: build_url!(domain, "/" <> path)
+
+  defp perform_request(:get, url, headers, _body, _content_type) do
+    Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
+  end
+
+  defp perform_request(method, url, headers, body, content_type) do
+    Application.http_client.request(
+      method,
+      {to_charlist(url), Utils.to_charlists(headers), to_charlist(content_type), to_charlist(body)},
+      [timeout: 10_000],
+      [])
+  end
 end

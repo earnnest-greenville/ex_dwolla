@@ -125,7 +125,6 @@ defmodule ExDwolla.Utils do
   @doc since: "0.0.1"
   def strip_nils(m), do: m |> Enum.filter(fn {_k, v} -> v !== nil end) |> Map.new
 
-
   @doc """
   Given a list of HTTP Response headers, extract and return the location
 
@@ -164,5 +163,45 @@ defmodule ExDwolla.Utils do
     |> strip_nils()
     |> Enum.reduce("", fn({k, v}, agg) -> to_string(k) <> "=" <> to_string(v) <> "&" <> agg end)
     |> String.trim_trailing("&")
+  end
+
+  @doc """
+  Convert a keyword list or tuple from strings to charlists
+
+  ## Example
+      iex> ExDwolla.Utils.to_charlists({"message", "Hello, World!"})
+      {'message', 'Hello, World!'}
+
+      iex> ExDwolla.Utils.to_charlists([{"message1", "Hello, World!"}, {"message2", "Goodbye!"}])
+      [{'message1', 'Hello, World!'}, {'message2', 'Goodbye!'}]
+  """
+  @doc since: "0.0.1"
+  def to_charlists({key, value}) when is_bitstring(key) and is_bitstring(value) do
+    {to_charlist(key), to_charlist(value)}
+  end
+
+  def to_charlists(keyword_list) when is_list(keyword_list) do
+    keyword_list
+    |> Enum.map(&to_charlists/1)
+  end
+
+  @doc """
+  Convert a keyword list or tuple from charlists to strings
+
+  ## Example
+      iex> ExDwolla.Utils.to_strings({'message', 'Hello, World!'})
+      {"message", "Hello, World!"}
+
+      iex> ExDwolla.Utils.to_strings([{'message1', 'Hello, World!'}, {'message2', 'Goodbye!'}])
+      [{"message1", "Hello, World!"}, {"message2", "Goodbye!"}]
+  """
+  @doc since: "0.0.1"
+  def to_strings({key, value}) when is_list(key) and is_list(value) do
+    {to_string(key), to_string(value)}
+  end
+
+  def to_strings(keyword_list) when is_list(keyword_list) do
+    keyword_list
+    |> Enum.map(&to_strings/1)
   end
 end
