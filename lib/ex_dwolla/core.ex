@@ -26,7 +26,7 @@ defmodule ExDwolla.Core do
     environment = AuthStore.get_environment()
     %{token: token, token_type: token_type} =  AuthStore.get_token()
     domain = Utils.base_api_domain(environment)
-    base_headers = base_headers(method, token, token_type)
+    base_headers = base_headers(method, token, token_type, domain)
     url = build_url!(domain, url_or_path)
 
     r = perform_request(method, url, base_headers ++ headers, body, content_type)
@@ -38,6 +38,7 @@ defmodule ExDwolla.Core do
         {:ok, snaked, headers}
       {:ok, {{_, status_code, _}, _headers, body}} ->
         Logger.debug("Got response_code from Dwolla: #{status_code}.")
+        Logger.debug(body)
         snaked = body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:error, {status_code, snaked}}
       {:error, {:failed_connect, _}} ->
@@ -67,16 +68,17 @@ defmodule ExDwolla.Core do
     end
   end
 
-  defp base_headers(:post, token, token_type) do
+  defp base_headers(:post, token, token_type, domain) do
     [
       {"Content-Type", "application/vnd.dwolla.v1.hal+json"},
       {"Accept", "application/vnd.dwolla.v1.hal+json"},
       {"Authorization", "#{token_type} #{token}"},
-      {"Idempotency-Key", UUID.uuid4()}
+      {"Idempotency-Key", UUID.uuid4()},
+      {"host", domain}
     ]
   end
 
-  defp base_headers(_, token, token_type) do
+  defp base_headers(_, token, token_type, _domain) do
     [
       {"Content-Type", "application/vnd.dwolla.v1.hal+json"},
       {"Accept", "application/vnd.dwolla.v1.hal+json"},
@@ -100,10 +102,14 @@ defmodule ExDwolla.Core do
   end
 
   defp perform_request(method, url, headers, body, content_type) do
+    body1 = to_charlist(body)
+    content_length = body1 |> length() |> to_string()
+    headers1 = headers ++ [{"content-length", content_length}, {"connection", "keep-alive"}]
+
     Application.http_client.request(
       method,
-      {to_charlist(url), Utils.to_charlists(headers), to_charlist(content_type), to_charlist(body)},
+      {to_charlist(url), Utils.to_charlists(headers1), to_charlist(content_type), body1},
       [timeout: 10_000],
-      [])
+      [headers_as_is: true])
   end
 end
