@@ -27,19 +27,19 @@ defmodule ExDwolla.Core do
     %{token: token, token_type: token_type} =  AuthStore.get_token()
     domain = Utils.base_api_domain(environment)
     base_headers = base_headers(method, token, token_type, domain)
+    all_headers = merge_headers(base_headers, headers)
     url = build_url!(domain, url_or_path)
 
-    r = perform_request(method, url, base_headers ++ headers, body, content_type)
+    r = perform_request(method, url, all_headers, body, content_type)
 
     case r do
-      {:ok, {{_, 201, _}, headers, ''}} -> {:ok, %{}, Utils.to_strings(headers)}
-      {:ok, {{_, 200, _}, headers, body}} ->
-        snaked = body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
+      {:ok, {{_, 201, _}, headers, ""}} -> {:ok, %{}, Utils.to_strings(headers)}
+      {:ok, {{_, 200, _}, headers, response_body}} ->
+        snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:ok, snaked, headers}
-      {:ok, {{_, status_code, _}, _headers, body}} ->
+      {:ok, {{_, status_code, _}, _headers, response_body}} ->
         Logger.debug("Got response_code from Dwolla: #{status_code}.")
-        Logger.debug(body)
-        snaked = body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
+        snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:error, {status_code, snaked}}
       {:error, {:failed_connect, _}} ->
         Logger.debug("Failed to connect, retrying #{attempts - 1} more times.")
@@ -68,13 +68,26 @@ defmodule ExDwolla.Core do
     end
   end
 
+  def upload_document_request(path, filename, file, extra_data) do
+    with {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
+         content_type <- "multipart/form-data; boundary=#{boundary}",
+         {:ok, _body, headers} <- base_request(:post, path, [{"Content-Type", content_type}], data, 5, content_type),
+         {:ok, location} <- Utils.get_location_from_headers(headers)
+    do
+      id = location |> String.split("/") |> Enum.at(-1)
+      {:ok, id}
+    else
+      error -> error
+    end
+  end
+
   defp base_headers(:post, token, token_type, domain) do
     [
-      {"host", domain}
+      {"host", domain},
       {"Content-Type", "application/vnd.dwolla.v1.hal+json"},
       {"Accept", "application/vnd.dwolla.v1.hal+json"},
       {"Authorization", "#{token_type} #{token}"},
-      {"Idempotency-Key", UUID.uuid4()},
+      {"Idempotency-Key", UUID.uuid4()}
     ]
   end
 
@@ -102,14 +115,58 @@ defmodule ExDwolla.Core do
   end
 
   defp perform_request(method, url, headers, body, content_type) do
-    body1 = to_charlist(body)
-    content_length = body1 |> length() |> to_string()
-    headers1 = headers ++ [{"content-length", content_length}, {"connection", "keep-alive"}]
+    content_length = body |> :erlang.byte_size() |> to_string()
+    headers1 = merge_headers(headers, [{"content-length", content_length}, {"connection", "keep-alive"}])
+
+    IO.inspect(headers1)
 
     Application.http_client.request(
       method,
-      {to_charlist(url), Utils.to_charlists(headers1), to_charlist(content_type), body1},
+      {to_charlist(url), Utils.to_charlists(headers1), to_charlist(content_type), body},
       [timeout: 10_000],
-      [headers_as_is: true])
+      [headers_as_is: true, body_format: :binary])
   end
+
+  defp format_multipart_data(name, filename, file, extra_data) do
+    boundary = "-------------------------" <> UUID.uuid4()
+    line_separator = "\r\n"
+    start = "--#{boundary}"
+
+    base_body = extra_data
+    |> Utils.recase(:camel)
+    |> Utils.strip_nils()
+    |> Map.delete("struct")
+    |> Enum.reduce(<<>>, fn ({k, v}, agg) ->
+      agg <>
+      start <> line_separator <>
+      "Content-Disposition: form-data; name=\"#{k}\"" <> line_separator <>
+      "Content-Type: text/plain" <> line_separator <> line_separator <>
+      "#{v}" <> line_separator
+    end)
+
+    body =
+      base_body <>
+      start <> line_separator <>
+      "Content-Disposition: form-data; name=\"#{name}\"; filename=\"#{filename}\"" <> line_separator <>
+      "Content-Type: application/pdf" <> line_separator <> line_separator <>
+      file <> line_separator <>
+      start <> "--" <> line_separator
+
+    {boundary, body}
+  end
+
+  defp merge_headers(base_headers, new_headers) do
+    base_headers1 = base_headers |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
+    new_headers1 = new_headers |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
+    merged = Keyword.merge(base_headers1, new_headers1)
+    merged |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+  end
+
+  defp mime_type(".pdf"), do: "application/pdf"
+
+  defp mime_type(".jpg"), do: "image/jpeg"
+
+  defp mime_type(".jpeg"), do: "image/jpeg"
+
+  defp mime_type(".png"), do: "image/png"
 end
