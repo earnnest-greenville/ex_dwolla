@@ -28,11 +28,11 @@ defmodule ExDwolla.TestHttpClient do
 
   def request(
     :post,
-    {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type, '{"accountNumber":"1","bankAccountType":"checking","routingNumber":"1"}'},
+    {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type, "{\"accountNumber\":\"1\",\"bankAccountType\":\"checking\",\"routingNumber\":\"1\"}"},
     _http_opts,
-    []
+    _opts
   ) do
-    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ''}}
+    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ""}}
   end
 
   def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false', _headers}, _http_opts, []) do
