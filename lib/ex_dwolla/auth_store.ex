@@ -72,5 +72,5 @@ defmodule ExDwolla.AuthStore do
     end
   end
 
-  defp seconds_to_timeout(seconds), do: (seconds - 10) * 10000
+  defp seconds_to_timeout(seconds), do: (seconds - 10) * 1_000
 end
