@@ -118,8 +118,6 @@ defmodule ExDwolla.Core do
     content_length = body |> :erlang.byte_size() |> to_string()
     headers1 = merge_headers(headers, [{"content-length", content_length}, {"connection", "keep-alive"}])
 
-    IO.inspect(headers1)
-
     Application.http_client.request(
       method,
       {to_charlist(url), Utils.to_charlists(headers1), to_charlist(content_type), body},
@@ -131,6 +129,7 @@ defmodule ExDwolla.Core do
     boundary = "-------------------------" <> UUID.uuid4()
     line_separator = "\r\n"
     start = "--#{boundary}"
+    mime_type = filename |> String.split(".") |> Enum.at(-1) |> mime_type!()
 
     base_body = extra_data
     |> Utils.recase(:camel)
@@ -148,7 +147,7 @@ defmodule ExDwolla.Core do
       base_body <>
       start <> line_separator <>
       "Content-Disposition: form-data; name=\"#{name}\"; filename=\"#{filename}\"" <> line_separator <>
-      "Content-Type: application/pdf" <> line_separator <> line_separator <>
+      "Content-Type: " <> mime_type <> line_separator <> line_separator <>
       file <> line_separator <>
       start <> "--" <> line_separator
 
@@ -162,11 +161,13 @@ defmodule ExDwolla.Core do
     merged |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
   end
 
-  defp mime_type(".pdf"), do: "application/pdf"
+  defp mime_type!(".pdf"), do: "application/pdf"
 
-  defp mime_type(".jpg"), do: "image/jpeg"
+  defp mime_type!(".jpg"), do: "image/jpeg"
 
-  defp mime_type(".jpeg"), do: "image/jpeg"
+  defp mime_type!(".jpeg"), do: "image/jpeg"
 
-  defp mime_type(".png"), do: "image/png"
+  defp mime_type!(".png"), do: "image/png"
+
+  defp mime_type!(_), do: raise "Unsupported File Type!"
 end
