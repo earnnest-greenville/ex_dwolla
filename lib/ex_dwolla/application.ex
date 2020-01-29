@@ -18,5 +18,5 @@ defmodule ExDwolla.Application do
     Supervisor.start_link(children, opts)
   end
 
-  def http_client(), do: Application.get_env(:ex_dwolla, :http_client, Mojito)
+  def http_client(), do: Application.get_env(:ex_dwolla, :http_client, :httpc)
 end
