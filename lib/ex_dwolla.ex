@@ -109,3 +109,30 @@ defmodule ExDwolla.Accounts do
     Core.get_request("/accounts/#{account_id}/transfers?#{query_string}")
   end
 end
+
+defmodule ExDwolla.Customers do
+  @moduledoc """
+  Customer related Dwolla API Functionality
+  """
+  @moduledoc since: "0.0.1"
+
+  alias ExDwolla.Core
+  alias ExDwolla.Requests
+  alias ExDwolla.Utils
+
+  def get_all(%Requests.GetCustomers{} = params \\ %Requests.GetCustomers{}) do
+    query_string = Utils.map_to_query_string(params)
+    url = case query_string do
+      "" -> "/customers"
+      _ -> "/customers?#{query_string}"
+    end
+    Core.get_request(url)
+  end
+
+  def upload_document(%Requests.UploadDocument{
+    customer_id: customer_id,
+    filename: filename,
+    file_contents: file_contents,
+    document_type: document_type
+  }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, file_contents, %{documentType: document_type})
+end
