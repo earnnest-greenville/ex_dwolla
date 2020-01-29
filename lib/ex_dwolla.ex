@@ -120,19 +120,34 @@ defmodule ExDwolla.Customers do
   alias ExDwolla.Requests
   alias ExDwolla.Utils
 
-  def get_all(%Requests.GetCustomers{} = params \\ %Requests.GetCustomers{}) do
-    query_string = Utils.map_to_query_string(params)
-    url = case query_string do
-      "" -> "/customers"
-      _ -> "/customers?#{query_string}"
-    end
-    Core.get_request(url)
-  end
+  # def get_all(%Requests.GetCustomers{} = params \\ %Requests.GetCustomers{}) do
+  #   query_string = Utils.map_to_query_string(params)
+  #   url = case query_string do
+  #     "" -> "/customers"
+  #     _ -> "/customers?#{query_string}"
+  #   end
+  #   Core.get_request(url)
+  # end
 
-  def upload_document(%Requests.UploadDocument{
-    customer_id: customer_id,
-    filename: filename,
-    file_contents: file_contents,
-    document_type: document_type
-  }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, file_contents, %{documentType: document_type})
+  @doc """
+  Create a new Customer
+
+  ## Example
+      iex> customer = %ExDwolla.Requests.Customer{
+      ...>   first_name: "Earnnest",
+      ...>   last_name: "Developer",
+      ...> }
+      iex> Dwolla.Customers.create(customer)
+      {:ok, "new_customer_id"}
+  """
+  @doc since: "0.0.1"
+  def create(%Requests.Customer.Create{} = customer),
+    do: Core.create_request("/customers", customer)
+
+  # def upload_document(%Requests.UploadDocument{
+  #   customer_id: customer_id,
+  #   filename: filename,
+  #   file_contents: file_contents,
+  #   document_type: document_type
+  # }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, file_contents, %{documentType: document_type})
 end
