@@ -73,6 +73,17 @@ defmodule ExDwolla.Requests.Customer.Update do
   ]
 end
 
+defmodule ExDwolla.Requests.Customer.CreateFundingSource do
+  @moduledoc false
+  defstruct [
+    :plaid_token,
+    :name,
+    :routing_number,
+    :account_number,
+    :bank_account_type
+  ]
+end
+
 defmodule ExDwolla.Requests.Customer.Controller do
   @moduledoc false
   defstruct [
