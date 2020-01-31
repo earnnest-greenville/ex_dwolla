@@ -181,6 +181,8 @@ defmodule ExDwolla.FundingSources do
   alias ExDwolla.Utils
 
   def get(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}")
+
+  def get_microdeposits(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}/micro-deposits")
 end
 
 defmodule ExDwolla.Transfers do
