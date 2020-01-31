@@ -161,3 +161,16 @@ defmodule ExDwolla.Customers do
     document_type: document_type
   }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, file_contents, %{documentType: document_type})
 end
+
+defmodule ExDwolla.FundingSources do
+  @moduledoc """
+  Funding Source related Dwolla API Functionality
+  """
+  @moduledoc since: "0.0.1"
+
+  alias ExDwolla.Core
+  alias ExDwolla.Requests
+  alias ExDwolla.Utils
+
+  def get(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}")
+end
