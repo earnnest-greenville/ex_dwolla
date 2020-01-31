@@ -68,7 +68,8 @@ defmodule ExDwolla.Requests.Customer.Update do
     :business_classification,
     :ein,
     :website,
-    :controller
+    :controller,
+    :status
   ]
 end
 
