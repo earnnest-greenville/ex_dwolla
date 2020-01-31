@@ -73,6 +73,7 @@ defmodule ExDwolla.Core do
       {:ok, body, _headers} -> {:ok, body}
       error -> error
     end
+  end
 
   def upload_document_request(path, filename, file, extra_data) do
     with {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
