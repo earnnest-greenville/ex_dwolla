@@ -195,6 +195,6 @@ defmodule ExDwolla.Transfers do
 
   def get(transfer_id), do: Core.get_request("/transfers/#{transfer_id}")
 
-  def create(%Requests.Transfers.Create{} = transfer),
-    do: Core.create_request_with_response("/transfers", transfer)
+  def create(%Requests.Transfers.Create{} = transfer, idempotency_key),
+    do: Core.create_request_with_response("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
 end
