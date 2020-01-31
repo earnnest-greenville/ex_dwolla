@@ -113,16 +113,16 @@ defmodule ExDwolla.Core do
     ]
   end
 
-  defp build_url!(domain, "https://" <> rest = url) do
+  def build_url!(domain, "https://" <> rest = url) do
     case String.starts_with?(rest, domain) do
       true -> url
       _ -> raise("Invalid URL requested!")
     end
   end
 
-  defp build_url!(domain, "/" <> _rest = path), do: "https://" <> domain <> path
+  def build_url!(domain, "/" <> _rest = path), do: "https://" <> domain <> path
 
-  defp build_url!(domain, path), do: build_url!(domain, "/" <> path)
+  def build_url!(domain, path), do: build_url!(domain, "/" <> path)
 
   defp perform_request(:get, url, headers, _body, _content_type) do
     Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
