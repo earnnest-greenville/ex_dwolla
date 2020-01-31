@@ -45,6 +45,33 @@ defmodule ExDwolla.Requests.Customer.Create do
   ]
 end
 
+defmodule ExDwolla.Requests.Customer.Update do
+  @moduledoc false
+  defstruct [
+    :first_name,
+    :last_name,
+    :email,
+    :type,
+    :address1,
+    :address2,
+    :city,
+    :state,
+    :postal_code,
+    :date_of_birth,
+    :ssn,
+    :phone,
+    :business_name,
+    :ip_address,
+    :correlation_id,
+    :doing_business_as,
+    :business_type,
+    :business_classification,
+    :ein,
+    :website,
+    :controller
+  ]
+end
+
 defmodule ExDwolla.Requests.Customer.Controller do
   @moduledoc false
   defstruct [

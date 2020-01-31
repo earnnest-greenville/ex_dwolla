@@ -68,6 +68,12 @@ defmodule ExDwolla.Core do
     end
   end
 
+  def update_request(path, data) do
+    case base_request(:post, path, [], data) do
+      {:ok, body, _headers} -> {:ok, body}
+      error -> error
+    end
+
   def upload_document_request(path, filename, file, extra_data) do
     with {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
          content_type <- "multipart/form-data; boundary=#{boundary}",

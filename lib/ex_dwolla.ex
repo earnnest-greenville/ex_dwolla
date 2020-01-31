@@ -146,6 +146,10 @@ defmodule ExDwolla.Customers do
   def create(%Requests.Customer.Create{} = customer),
     do: Core.create_request("/customers", customer)
 
+  @doc since: "0.0.1"
+  def update(%Requests.Customer.Update{} = customer, customer_id),
+    do: Core.update_request("/customers/#{customer_id}")
+
   def upload_document(%Requests.UploadDocument{
     customer_id: customer_id,
     filename: filename,
