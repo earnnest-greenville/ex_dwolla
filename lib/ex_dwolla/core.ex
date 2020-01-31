@@ -68,6 +68,13 @@ defmodule ExDwolla.Core do
     end
   end
 
+  def create_request_with_response(path, data) do
+    case base_request(:post, path, data) do
+      {:ok, body, _headers} -> {:ok, body}
+      error -> error
+    end
+  end
+
   def update_request(path, data) do
     case base_request(:post, path, [], data) do
       {:ok, body, _headers} -> {:ok, body}
