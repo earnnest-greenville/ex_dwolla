@@ -156,11 +156,11 @@ defmodule ExDwolla.Customers do
 
   @doc since: "0.0.1"
   def create_iav_token(customer_id),
-    do: Core.create_request_with_response("/customers/#{customer_id}/iav-token", [])
+    do: Core.create_request_with_response("/customers/#{customer_id}/iav-token", [], [])
 
   @doc since: "0.0.1"
   def create_funding_source_token(customer_id),
-    do: Core.create_request_with_response("/customers/#{customer_id}/funding-sources-token", [])
+    do: Core.create_request_with_response("/customers/#{customer_id}/funding-sources-token", [], [])
 
   def upload_document(%Requests.UploadDocument{
     customer_id: customer_id,
