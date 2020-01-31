@@ -152,7 +152,15 @@ defmodule ExDwolla.Customers do
 
   @doc since: "0.0.1"
   def create_funding_source(%Requests.Customer.CreateFundingSource{} = funding_source, customer_id),
-    do: Core.create_request("/customers/#{customer_id}/funding_sources")
+    do: Core.create_request("/customers/#{customer_id}/funding_sources", funding_source)
+
+  @doc since: "0.0.1"
+  def create_iav_token(customer_id),
+    do: Core.create_request_with_response("/customers/#{customer_id}/iav-token", [])
+
+  @doc since: "0.0.1"
+  def create_funding_source_token(customer_id),
+    do: Core.create_request_with_response("/customers/#{customer_id}/funding-sources-token", [])
 
   def upload_document(%Requests.UploadDocument{
     customer_id: customer_id,
@@ -173,4 +181,20 @@ defmodule ExDwolla.FundingSources do
   alias ExDwolla.Utils
 
   def get(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}")
+end
+
+defmodule ExDwolla.Transfers do
+  @moduledoc """
+  Transfer related Dwolla API Functionality
+  """
+  @moduledo since: "0.0.1"
+
+  alias ExDwolla.Core
+  alias ExDwolla.Requests
+  alias ExDwolla.Utils
+
+  def get(transfer_id), do: Core.get_request("/transfers/#{transfer_id}")
+
+  def create(%Requests.Transfers.Create{} = transfer),
+    do: Core.create_request_with_response("/transfers", transfer)
 end

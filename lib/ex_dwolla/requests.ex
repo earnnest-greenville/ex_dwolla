@@ -127,3 +127,8 @@ defmodule ExDwolla.Requests.UploadDocument do
   @moduledoc false
   defstruct [:customer_id, :document_type, :filename, :file_contents]
 end
+
+defmodule ExDwolla.Requests.Transfers.Create do
+  @moduledoc false
+  defstruct [:_links, :amount, :metadata, :fees, :clearing, :ach_details, :correlation_id]
+end
