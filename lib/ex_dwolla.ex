@@ -165,9 +165,9 @@ defmodule ExDwolla.Customers do
   def upload_document(%Requests.UploadDocument{
     customer_id: customer_id,
     filename: filename,
-    file_contents: file_contents,
+    path: path,
     document_type: document_type
-  }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, file_contents, %{documentType: document_type})
+  }), do: Core.upload_document_request("/customers/#{customer_id}/documents", filename, path, %{documentType: document_type})
 end
 
 defmodule ExDwolla.FundingSources do
