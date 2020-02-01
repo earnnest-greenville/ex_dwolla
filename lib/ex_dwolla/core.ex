@@ -75,7 +75,7 @@ defmodule ExDwolla.Core do
     end
   end
 
-  def update_request(path, data) do
+  def update_request(path, data, headers \\ []) do
     case base_request(:post, path, [], data) do
       {:ok, body, _headers} -> {:ok, body}
       error -> error

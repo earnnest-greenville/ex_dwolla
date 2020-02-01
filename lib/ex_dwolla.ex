@@ -156,11 +156,11 @@ defmodule ExDwolla.Customers do
 
   @doc since: "0.0.1"
   def create_iav_token(customer_id),
-    do: Core.create_request_with_response("/customers/#{customer_id}/iav-token", "")
+    do: Core.update_request("/customers/#{customer_id}/iav-token", "")
 
   @doc since: "0.0.1"
   def create_funding_source_token(customer_id),
-    do: Core.create_request_with_response("/customers/#{customer_id}/funding-sources-token", "")
+    do: Core.update_request("/customers/#{customer_id}/funding-sources-token", "")
 
   def upload_document(%Requests.UploadDocument{
     customer_id: customer_id,
@@ -182,6 +182,9 @@ defmodule ExDwolla.FundingSources do
 
   def get(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}")
 
+  def remove(funding_source_id),
+    do: Core.update_request("/funding-sources/#{funding_source_id}", %{removed: true})
+
   def get_microdeposits(funding_source_id), do: Core.get_request("/funding-sources/#{funding_source_id}/micro-deposits")
 end
 
@@ -198,5 +201,5 @@ defmodule ExDwolla.Transfers do
   def get(transfer_id), do: Core.get_request("/transfers/#{transfer_id}")
 
   def create(%Requests.Transfers.Create{} = transfer, idempotency_key),
-    do: Core.create_request_with_response("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
+    do: Core.update_request("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
 end
