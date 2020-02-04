@@ -192,7 +192,7 @@ defmodule ExDwolla.Transfers do
   @moduledoc """
   Transfer related Dwolla API Functionality
   """
-  @moduledo since: "0.0.1"
+  @moduledoc since: "0.0.1"
 
   alias ExDwolla.Core
   alias ExDwolla.Requests
@@ -202,4 +202,21 @@ defmodule ExDwolla.Transfers do
 
   def create(%Requests.Transfers.Create{} = transfer, idempotency_key),
     do: Core.update_request("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
+end
+
+defmodule ExDwolla.Webhooks do
+  @moduledoc """
+  Webhook related Dwolla API Functionality
+  """
+  @moduledoc since: "0.0.1"
+
+  alias ExDwolla.Core
+  alias ExDwolla.Requests
+  alias ExDwolla.Utils
+
+  def create(%Requests.WebhookSubscriptions.Create{} = webhook_subscription),
+    do: Core.create_request("/webhook-subscriptions", webhook_subscription)
+
+  def delete(webhook_subscription_id),
+    do: Core.delete_request("/webhook_subscriptions/#{webhook_subscription_id}")
 end

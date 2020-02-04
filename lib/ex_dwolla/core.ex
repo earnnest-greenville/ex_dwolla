@@ -63,8 +63,6 @@ defmodule ExDwolla.Core do
     do
       id = location |> String.split("/") |> Enum.at(-1)
       {:ok, id}
-    else
-      error -> error
     end
   end
 
@@ -82,6 +80,13 @@ defmodule ExDwolla.Core do
     end
   end
 
+  def delete_request(path, id) do
+    case base_request(:delete, path, []) do
+      {:ok, _body, _headers} -> {:ok}
+      error -> error
+    end
+  end
+
   def upload_document_request(path, filename, file_path, extra_data) do
     {:ok, file} = File.read(file_path)
     with {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
@@ -91,8 +96,6 @@ defmodule ExDwolla.Core do
     do
       id = location |> String.split("/") |> Enum.at(-1)
       {:ok, id}
-    else
-      error -> error
     end
   end
 

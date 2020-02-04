@@ -132,3 +132,8 @@ defmodule ExDwolla.Requests.Transfers.Create do
   @moduledoc false
   defstruct [:_links, :amount, :metadata, :fees, :clearing, :ach_details, :correlation_id]
 end
+
+defmodule ExDwolla.Requests.WebhookSubscriptions.Create do
+  @moduledoc false
+  defstruct [:url, :secret]
+end
