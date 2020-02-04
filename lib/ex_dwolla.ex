@@ -152,7 +152,7 @@ defmodule ExDwolla.Customers do
 
   @doc since: "0.0.1"
   def create_funding_source(%Requests.Customer.CreateFundingSource{} = funding_source, customer_id),
-    do: Core.create_request("/customers/#{customer_id}/funding_sources", funding_source)
+    do: Core.create_request("/customers/#{customer_id}/funding-sources", funding_source)
 
   @doc since: "0.0.1"
   def create_iav_token(customer_id),
