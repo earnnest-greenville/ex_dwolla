@@ -204,7 +204,7 @@ defmodule ExDwolla.Transfers do
     do: Core.update_request("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
 end
 
-defmodule ExDwolla.Webhooks do
+defmodule ExDwolla.WebhookSubscriptions do
   @moduledoc """
   Webhook related Dwolla API Functionality
   """
