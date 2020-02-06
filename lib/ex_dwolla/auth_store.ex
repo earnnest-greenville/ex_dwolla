@@ -24,7 +24,8 @@ defmodule ExDwolla.AuthStore do
     Process.flag(:trap_exit, true)
     state = %__MODULE__{environment: environment, key: key, secret: secret}
     {:ok, {state1, expires_in}} = refresh_access_token(state)
-    {:ok, state1, seconds_to_timeout(expires_in)}
+    Process.send_after(self(), :refresh_access_token, seconds_to_timeout(expires_in))
+    {:ok, state1}
   end
 
   @impl true
@@ -38,9 +39,11 @@ defmodule ExDwolla.AuthStore do
   end
 
   @impl true
-  def handle_info(:timeout, %__MODULE__{} = state) do
+  def handle_info(:refresh_access_token, %__MODULE__{} = state) do
     case refresh_access_token(state) do
-      {:ok, {state1, expires_in}} -> {:noreply, state1, seconds_to_timeout(expires_in)}
+      {:ok, {state1, expires_in}} ->
+        Process.send_after(self(), :refresh_access_token, seconds_to_timeout(expires_in))
+        {:noreply, state1}
       {:error, error} -> {:stop, error, state}
     end
   end
