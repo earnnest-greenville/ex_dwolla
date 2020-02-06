@@ -148,7 +148,7 @@ defmodule ExDwolla.Customers do
 
   @doc since: "0.0.1"
   def update(%Requests.Customer.Update{} = customer, customer_id),
-    do: Core.update_request("/customers/#{customer_id}")
+    do: Core.update_request("/customers/#{customer_id}", customer)
 
   @doc since: "0.0.1"
   def create_funding_source(%Requests.Customer.CreateFundingSource{} = funding_source, customer_id),
