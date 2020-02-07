@@ -179,13 +179,13 @@ defmodule ExDwolla.Core do
     merged |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
   end
 
-  defp mime_type!(".pdf"), do: "application/pdf"
+  defp mime_type!("pdf"), do: "application/pdf"
 
-  defp mime_type!(".jpg"), do: "image/jpeg"
+  defp mime_type!("jpg"), do: "image/jpeg"
 
-  defp mime_type!(".jpeg"), do: "image/jpeg"
+  defp mime_type!("jpeg"), do: "image/jpeg"
 
-  defp mime_type!(".png"), do: "image/png"
+  defp mime_type!("png"), do: "image/png"
 
   defp mime_type!(_), do: raise "Unsupported File Type!"
 end
