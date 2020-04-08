@@ -32,7 +32,7 @@ defmodule ExDwolla.TestHttpClient do
     _http_opts,
     _opts
   ) do
-    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ""}}
+    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ''}}
   end
 
   def request(
@@ -41,7 +41,7 @@ defmodule ExDwolla.TestHttpClient do
     _http_opts,
     _opts
   ) do
-    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/customers/new_customer_id'}], ""}}
+    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/customers/new_customer_id'}], ''}}
   end
 
   def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false', _headers}, _http_opts, []) do
