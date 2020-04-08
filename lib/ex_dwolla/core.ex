@@ -37,6 +37,9 @@ defmodule ExDwolla.Core do
       {:ok, {{_, 200, _}, headers, response_body}} ->
         snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:ok, snaked, headers}
+      {:ok, {{_, status_code, _}, _headers, ''}} ->
+        Logger.debug("Got response code with empty body from Dwolla: #{status_code}.")
+        {:error, {status_code, ""}}
       {:ok, {{_, status_code, _}, _headers, response_body}} ->
         Logger.debug("Got response_code from Dwolla: #{status_code}.")
         snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
