@@ -33,7 +33,7 @@ defmodule ExDwolla.Core do
     r = perform_request(method, url, all_headers, body, content_type)
 
     case r do
-      {:ok, {{_, 201, _}, headers, ''}} -> {:ok, %{}, Utils.to_strings(headers)}
+      {:ok, {{_, 201, _}, headers, ""}} -> {:ok, %{}, Utils.to_strings(headers)}
       {:ok, {{_, 200, _}, headers, response_body}} ->
         snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:ok, snaked, headers}
