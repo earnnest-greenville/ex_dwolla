@@ -42,6 +42,7 @@ defmodule ExDwolla.Core do
         {:error, {status_code, ""}}
       {:ok, {{_, status_code, _}, _headers, response_body}} ->
         Logger.debug("Got response_code from Dwolla: #{status_code}.")
+        Logger.debug("With response body: #{response_body}")
         snaked = response_body |> to_string() |> Jason.decode!() |> Utils.recase(:snake)
         {:error, {status_code, snaked}}
       {:error, {:failed_connect, _}} ->
