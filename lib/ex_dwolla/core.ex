@@ -84,7 +84,7 @@ defmodule ExDwolla.Core do
     end
   end
 
-  def delete_request(path, id) do
+  def delete_request(path) do
     case base_request(:delete, path, []) do
       {:ok, _body, _headers} -> {:ok}
       error -> error
