@@ -84,7 +84,7 @@ defmodule ExDwolla.Core do
     end
   end
 
-  def delete_request(path, id) do
+  def delete_request(path) do
     case base_request(:delete, path, []) do
       {:ok, _body, _headers} -> {:ok}
       error -> error
@@ -134,6 +134,10 @@ defmodule ExDwolla.Core do
 
   defp perform_request(:get, url, headers, _body, _content_type) do
     Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
+  end
+
+  defp perform_request(:delete, url, headers, _body, _content_type) do
+    Application.http_client.request(:delete, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
   end
 
   defp perform_request(method, url, headers, body, content_type) do

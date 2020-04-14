@@ -218,5 +218,5 @@ defmodule ExDwolla.WebhookSubscriptions do
     do: Core.create_request("/webhook-subscriptions", webhook_subscription)
 
   def delete(webhook_subscription_id),
-    do: Core.delete_request("/webhook_subscriptions/#{webhook_subscription_id}")
+    do: Core.delete_request("/webhook-subscriptions/#{webhook_subscription_id}")
 end
