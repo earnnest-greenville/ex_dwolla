@@ -136,6 +136,10 @@ defmodule ExDwolla.Core do
     Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
   end
 
+  defp perform_request(:delete, url, headers, _body, _content_type) do
+    Application.http_client.request(:delete, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
+  end
+
   defp perform_request(method, url, headers, body, content_type) do
     content_length = body |> :erlang.byte_size() |> to_string()
     headers1 = merge_headers(headers, [{"content-length", content_length}, {"connection", "keep-alive"}])
