@@ -181,8 +181,8 @@ defmodule ExDwolla.Core do
   end
 
   defp merge_headers(base_headers, new_headers) do
-    base_headers1 = base_headers |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
-    new_headers1 = new_headers |> Enum.map(fn {k, v} -> {String.to_atom(k), v} end)
+    base_headers1 = base_headers |> Enum.map(fn {k, v} -> {String.to_atom(String.downcase(k)), v} end)
+    new_headers1 = new_headers |> Enum.map(fn {k, v} -> {String.to_atom(String.downcase(k)), v} end)
     merged = Keyword.merge(base_headers1, new_headers1)
     merged |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
   end
