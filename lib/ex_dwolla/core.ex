@@ -54,38 +54,31 @@ defmodule ExDwolla.Core do
 
   def base_request(_, _, _, _, _, _), do: {:error, "Unsupported data type specified for request"}
 
-  def get_request(path) do
-    case base_request(:get, path, []) do
+  def get_request(path, request_headers \\ []) do
+    case base_request(:get, path, request_headers) do
       {:ok, body, _headers} -> {:ok, body}
       error -> error
     end
   end
 
-  def create_request(path, data) do
-    with {:ok, _body, headers} <- base_request(:post, path, [], data),
-         {:ok, location} <- Utils.get_location_from_headers(headers)
+  def create_request(path, data, request_headers \\ []) do
+    with {:ok, _body, response_headers} <- base_request(:post, path, request_headers, data),
+         {:ok, location} <- Utils.get_location_from_headers(response_headers)
     do
       id = location |> String.split("/") |> Enum.at(-1)
       {:ok, id}
     end
   end
 
-  def create_request_with_response(path, data, headers \\ []) do
-    case base_request(:post, path, headers, data) do
+  def update_request(path, data, request_headers \\ []) do
+    case base_request(:post, path, request_headers, data) do
       {:ok, body, _headers} -> {:ok, body}
       error -> error
     end
   end
 
-  def update_request(path, data, headers \\ []) do
-    case base_request(:post, path, [], data) do
-      {:ok, body, _headers} -> {:ok, body}
-      error -> error
-    end
-  end
-
-  def delete_request(path) do
-    case base_request(:delete, path, []) do
+  def delete_request(path, request_headers \\ []) do
+    case base_request(:delete, path, request_headers) do
       {:ok, _body, _headers} -> {:ok}
       error -> error
     end
