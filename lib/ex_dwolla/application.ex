@@ -19,4 +19,6 @@ defmodule ExDwolla.Application do
   end
 
   def http_client(), do: Application.get_env(:ex_dwolla, :http_client, :httpc)
+
+  def request_timeout(), do: Application.get_env(:ex_dwolla, :request_timeout, 30_000)
 end

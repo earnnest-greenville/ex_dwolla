@@ -126,11 +126,11 @@ defmodule ExDwolla.Core do
   def build_url!(domain, path), do: build_url!(domain, "/" <> path)
 
   defp perform_request(:get, url, headers, _body, _content_type) do
-    Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
+    Application.http_client.request(:get, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: Application.request_timeout], [])
   end
 
   defp perform_request(:delete, url, headers, _body, _content_type) do
-    Application.http_client.request(:delete, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: 10_000], [])
+    Application.http_client.request(:delete, {to_charlist(url), Utils.to_charlists(headers)}, [timeout: Application.request_timeout], [])
   end
 
   defp perform_request(method, url, headers, body, content_type) do
@@ -140,7 +140,7 @@ defmodule ExDwolla.Core do
     Application.http_client.request(
       method,
       {to_charlist(url), Utils.to_charlists(headers1), to_charlist(content_type), body},
-      [timeout: 10_000],
+      [timeout: Application.request_timeout],
       [headers_as_is: true, body_format: :binary])
   end
 
