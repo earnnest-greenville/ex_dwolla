@@ -130,7 +130,7 @@ end
 
 defmodule ExDwolla.Requests.Transfers.Create do
   @moduledoc false
-  defstruct [:_links, :amount, :metadata, :fees, :clearing, :ach_details, :correlation_id]
+  defstruct [:_links, :amount, :metadata, :fees, :clearing, :ach_details, :correlation_id, :clearing]
 end
 
 defmodule ExDwolla.Requests.WebhookSubscriptions.Create do
