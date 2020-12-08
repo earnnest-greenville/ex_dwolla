@@ -55,7 +55,7 @@ defmodule ExDwolla.Utils do
     map
     |> Map.delete(:__struct__)
     |> Map.to_list()
-    |> Map.new((&recase(&1, switch_to)))
+    |> Map.new(&recase(&1, switch_to))
   end
 
   def recase({k, v}, switch_to) when is_atom(k) do
@@ -68,17 +68,19 @@ defmodule ExDwolla.Utils do
 
   def recase({k, v}, :camel) when is_map(v), do: {camelize(k), recase(v, :camel)}
 
-  def recase({k, v}, :camel) when is_list(v), do: {camelize(k), v |> Enum.map((&recase(&1, :camel)))}
+  def recase({k, v}, :camel) when is_list(v),
+    do: {camelize(k), v |> Enum.map(&recase(&1, :camel))}
 
   def recase({k, v}, :camel), do: {camelize(k), v}
 
   def recase({k, v}, :snake) when is_map(v), do: {snakerize(k), recase(v, :snake)}
 
-  def recase({k, v}, :snake) when is_list(v), do: {snakerize(k), v |> Enum.map((&recase(&1, :snake)))}
+  def recase({k, v}, :snake) when is_list(v),
+    do: {snakerize(k), v |> Enum.map(&recase(&1, :snake))}
 
   def recase({k, v}, :snake), do: {snakerize(k), v}
 
-  def recase(v, switch_to) when is_list(v), do: v |> Enum.map((&recase(&1, switch_to)))
+  def recase(v, switch_to) when is_list(v), do: v |> Enum.map(&recase(&1, switch_to))
 
   def recase(s, _switch_to) when is_bitstring(s), do: s
 
@@ -96,8 +98,8 @@ defmodule ExDwolla.Utils do
   def camelize(s) when is_bitstring(s) do
     pascalCased = Macro.camelize(s)
 
-    first = pascalCased |> String.first
-    lower = first |> String.downcase
+    first = pascalCased |> String.first()
+    lower = first |> String.downcase()
 
     pascalCased |> String.replace(first, lower, global: false)
   end
@@ -113,7 +115,7 @@ defmodule ExDwolla.Utils do
       :test_two
   """
   @doc since: "0.0.1"
-  def snakerize(s), do: s |> String.replace("-", "_") |> Macro.underscore |> String.to_atom
+  def snakerize(s), do: s |> String.replace("-", "_") |> Macro.underscore() |> String.to_atom()
 
   @doc """
   Strip any key from the given map if the value is nil.
@@ -123,7 +125,7 @@ defmodule ExDwolla.Utils do
       %{message1: "Hello, World!", message3: "Foo"}
   """
   @doc since: "0.0.1"
-  def strip_nils(m), do: m |> Enum.filter(fn {_k, v} -> v !== nil end) |> Map.new
+  def strip_nils(m), do: m |> Enum.filter(fn {_k, v} -> v !== nil end) |> Map.new()
 
   @doc """
   Given a list of HTTP Response headers, extract and return the location
@@ -161,7 +163,7 @@ defmodule ExDwolla.Utils do
     map
     |> recase(:camel)
     |> strip_nils()
-    |> Enum.reduce("", fn({k, v}, agg) -> to_string(k) <> "=" <> to_string(v) <> "&" <> agg end)
+    |> Enum.reduce("", fn {k, v}, agg -> to_string(k) <> "=" <> to_string(v) <> "&" <> agg end)
     |> String.trim_trailing("&")
   end
 

@@ -1,17 +1,31 @@
 defmodule ExDwolla.TestHttpClient do
   @moduledoc false
 
-  def request(:post, {'https://accounts-sandbox.dwolla.com/token', _headers, _content_type, _body}, _http_opts, []) do
+  def request(
+        :post,
+        {'https://accounts-sandbox.dwolla.com/token', _headers, _content_type, _body},
+        _http_opts,
+        []
+      ) do
     {:ok, body} = Jason.encode(%{access_token: "abc", expires_in: 3160, token_type: "test"})
     {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 
   def request(:get, {'https://api-sandbox.dwolla.com/', _headers}, _http_opts, []) do
-    {:ok, body} = Jason.encode(%{_links: %{account: %{href: "https://api-sandbox.dwolla.com/accounts/some_id"}}})
+    {:ok, body} =
+      Jason.encode(%{
+        _links: %{account: %{href: "https://api-sandbox.dwolla.com/accounts/some_id"}}
+      })
+
     {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
   end
 
-  def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id', _headers}, _http_opts, []) do
+  def request(
+        :get,
+        {'https://api-sandbox.dwolla.com/accounts/some_account_id', _headers},
+        _http_opts,
+        []
+      ) do
     data = %{
       _links: %{
         self: %{
@@ -19,7 +33,7 @@ defmodule ExDwolla.TestHttpClient do
         }
       },
       id: "some_account_id",
-      name: "Your Test Account",
+      name: "Your Test Account"
     }
 
     {:ok, body} = Jason.encode(data)
@@ -27,24 +41,36 @@ defmodule ExDwolla.TestHttpClient do
   end
 
   def request(
-    :post,
-    {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type, "{\"accountNumber\":\"1\",\"bankAccountType\":\"checking\",\"routingNumber\":\"1\"}"},
-    _http_opts,
-    _opts
-  ) do
-    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ""}}
+        :post,
+        {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type,
+         "{\"accountNumber\":\"1\",\"bankAccountType\":\"checking\",\"routingNumber\":\"1\"}"},
+        _http_opts,
+        _opts
+      ) do
+    {:ok,
+     {{'HTTP/1.1', 201, 'OK'},
+      [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ""}}
   end
 
   def request(
-    :post,
-    {'https://api-sandbox.dwolla.com/customers', _headers, _content_type, "{\"firstName\":\"Earnnest\",\"lastName\":\"Developer\"}"},
-    _http_opts,
-    _opts
-  ) do
-    {:ok, {{'HTTP/1.1', 201, 'OK'}, [{'location', 'https://api-sandbox.dwolla.com/customers/new_customer_id'}], ""}}
+        :post,
+        {'https://api-sandbox.dwolla.com/customers', _headers, _content_type,
+         "{\"firstName\":\"Earnnest\",\"lastName\":\"Developer\"}"},
+        _http_opts,
+        _opts
+      ) do
+    {:ok,
+     {{'HTTP/1.1', 201, 'OK'},
+      [{'location', 'https://api-sandbox.dwolla.com/customers/new_customer_id'}], ""}}
   end
 
-  def request(:get, {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false', _headers}, _http_opts, []) do
+  def request(
+        :get,
+        {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false',
+         _headers},
+        _http_opts,
+        []
+      ) do
     data = %{
       "_links" => %{
         "self" => %{

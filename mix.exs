@@ -12,7 +12,7 @@ defmodule ExDwolla.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.circle": :test,
+        "coveralls.circle": :test
       ],
       test_coverage: [tool: ExCoveralls],
       deps: deps()
@@ -32,7 +32,7 @@ defmodule ExDwolla.MixProject do
       {:uuid, "~> 1.1"},
       {:junit_formatter, "~> 3.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
-      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
     ]
   end
 end

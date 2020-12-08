@@ -7,11 +7,12 @@ defmodule ExDwolla.Application do
 
   def start(_type, _args) do
     children = [
-      {ExDwolla.AuthStore, %{
-        environment: Application.get_env(:ex_dwolla, :environment, "dev"),
-        key: Application.get_env(:ex_dwolla, :key),
-        secret: Application.get_env(:ex_dwolla, :secret),
-      }},
+      {ExDwolla.AuthStore,
+       %{
+         environment: Application.get_env(:ex_dwolla, :environment, "dev"),
+         key: Application.get_env(:ex_dwolla, :key),
+         secret: Application.get_env(:ex_dwolla, :secret)
+       }}
     ]
 
     opts = [strategy: :one_for_one, name: ExDwolla.Supervisor]

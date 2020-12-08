@@ -29,7 +29,11 @@ defmodule ExDwolla.AuthStore do
   end
 
   @impl true
-  def handle_call(:get_token, _, %__MODULE__{access_token: access_token, access_token_type: access_token_type} = state) do
+  def handle_call(
+        :get_token,
+        _,
+        %__MODULE__{access_token: access_token, access_token_type: access_token_type} = state
+      ) do
     {:reply, %{token: access_token, token_type: access_token_type}, state}
   end
 
@@ -44,32 +48,44 @@ defmodule ExDwolla.AuthStore do
       {:ok, {state1, expires_in}} ->
         Process.send_after(self(), :refresh_access_token, seconds_to_timeout(expires_in))
         {:noreply, state1}
-      {:error, error} -> {:stop, error, state}
+
+      {:error, error} ->
+        {:stop, error, state}
     end
   end
 
   @impl true
   def code_change(_, %__MODULE__{} = state, _), do: {:ok, state}
 
-  defp refresh_access_token(%__MODULE__{environment: environment, key: key, secret: secret} = state) do
+  defp refresh_access_token(
+         %__MODULE__{environment: environment, key: key, secret: secret} = state
+       ) do
     domain = Utils.base_auth_domain(environment)
     url = 'https://' ++ to_charlist(domain) ++ '/token'
 
     credentials = Base.encode64("#{key}:#{secret}")
+
     headers = [
       {'Content-Type', 'application/x-www-form-urlencoded'},
       {'Authorization', 'Basic ' ++ to_charlist(credentials)}
     ]
 
-    with {:ok, {{_, 200, _status}, _headers, body}} = Application.http_client.request(
-      :post,
-      {url, headers, 'application/x-www-form-urlencoded', 'grant_type=client_credentials'},
-      [],
-      []
-    ),
-         {:ok, %{"access_token" => access_token, "expires_in" => expires_in, "token_type" => token_type}} <- Jason.decode(body)
-    do
-      {:ok, {%__MODULE__{state | access_token: access_token, access_token_type: token_type}, expires_in}}
+    with {:ok, {{_, 200, _status}, _headers, body}} =
+           Application.http_client().request(
+             :post,
+             {url, headers, 'application/x-www-form-urlencoded', 'grant_type=client_credentials'},
+             [],
+             []
+           ),
+         {:ok,
+          %{
+            "access_token" => access_token,
+            "expires_in" => expires_in,
+            "token_type" => token_type
+          }} <- Jason.decode(body) do
+      {:ok,
+       {%__MODULE__{state | access_token: access_token, access_token_type: token_type},
+        expires_in}}
     else
       error -> error
     end
