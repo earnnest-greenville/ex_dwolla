@@ -171,6 +171,9 @@ defmodule ExDwolla.Utils do
   Convert a keyword list or tuple from strings to charlists
 
   ## Example
+      iex> ExDwolla.Utils.to_charlists({'message', 'Hello, World!'})
+      {'message', 'Hello, World!'}
+
       iex> ExDwolla.Utils.to_charlists({"message", "Hello, World!"})
       {'message', 'Hello, World!'}
 
@@ -178,6 +181,10 @@ defmodule ExDwolla.Utils do
       [{'message1', 'Hello, World!'}, {'message2', 'Goodbye!'}]
   """
   @doc since: "0.0.1"
+  def to_charlists({key, value}) when is_list(key) and is_list(value) do
+    {key, value}
+  end
+
   def to_charlists({key, value}) when is_bitstring(key) and is_bitstring(value) do
     {to_charlist(key), to_charlist(value)}
   end
@@ -194,12 +201,19 @@ defmodule ExDwolla.Utils do
       iex> ExDwolla.Utils.to_strings({'message', 'Hello, World!'})
       {"message", "Hello, World!"}
 
+      iex> ExDwolla.Utils.to_strings({"message", "Hello, World!"})
+      {"message", "Hello, World!"}
+
       iex> ExDwolla.Utils.to_strings([{'message1', 'Hello, World!'}, {'message2', 'Goodbye!'}])
       [{"message1", "Hello, World!"}, {"message2", "Goodbye!"}]
   """
   @doc since: "0.0.1"
   def to_strings({key, value}) when is_list(key) and is_list(value) do
     {to_string(key), to_string(value)}
+  end
+
+  def to_strings({key, value}) when is_bitstring(key) and is_bitstring(value) do
+    {key, value}
   end
 
   def to_strings(keyword_list) when is_list(keyword_list) do
