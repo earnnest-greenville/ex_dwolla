@@ -60,7 +60,7 @@ defmodule ExDwolla.AuthStore do
   defp refresh_access_token(
          %__MODULE__{environment: environment, key: key, secret: secret} = state
        ) do
-    domain = Utils.base_auth_domain(environment)
+    domain = Utils.base_api_domain(environment)
     url = 'https://' ++ to_charlist(domain) ++ '/token'
 
     credentials = Base.encode64("#{key}:#{secret}")

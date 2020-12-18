@@ -5,21 +5,6 @@ defmodule ExDwolla.Utils do
   @moduledoc since: "0.0.1"
 
   @doc """
-  Given the environment, return the Dwolla authentication domain.
-
-  ## Example
-      iex> ExDwolla.Utils.base_auth_domain("dev")
-      "accounts-sandbox.dwolla.com"
-
-      iex> ExDwolla.Utils.base_auth_domain("prod")
-      "accounts.dwolla.com"
-  """
-  @doc since: "0.0.1"
-  def base_auth_domain(environment)
-  def base_auth_domain("dev"), do: "accounts-sandbox.dwolla.com"
-  def base_auth_domain(_), do: "accounts.dwolla.com"
-
-  @doc """
   Given the environment, return the Dwolla API domain.
 
   ## Example

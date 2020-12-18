@@ -3,7 +3,7 @@ defmodule ExDwolla.TestHttpClient do
 
   def request(
         :post,
-        {'https://accounts-sandbox.dwolla.com/token', _headers, _content_type, _body},
+        {'https://api-sandbox.dwolla.com/token', _headers, _content_type, _body},
         _http_opts,
         []
       ) do
