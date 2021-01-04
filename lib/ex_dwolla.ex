@@ -342,6 +342,10 @@ defmodule ExDwolla.FundingSources do
   def remove(funding_source_id),
     do: Core.update_request("/funding-sources/#{funding_source_id}", %{removed: true})
 
+  @spec send_microdeposits(id()) :: response()
+  def send_microdeposits(funding_source_id),
+    do: Core.update_request("/funding-sources/#{funding_source_id}/micro-deposits", "")
+
   @spec get_microdeposits(id()) :: response()
   def get_microdeposits(funding_source_id),
     do: Core.get_request("/funding-sources/#{funding_source_id}/micro-deposits")
