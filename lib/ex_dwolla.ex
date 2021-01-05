@@ -383,6 +383,9 @@ defmodule ExDwolla.Transfers do
   @spec create(create_transfer_request(), String.t()) :: create_response()
   def create(%{} = transfer, idempotency_key),
     do: Core.update_request("/transfers", transfer, [{"Idempotency-Key", idempotency_key}])
+
+  def simulate(),
+    do: Core.update_request("/sandbox-simulations", "")
 end
 
 defmodule ExDwolla.WebhookSubscriptions do
