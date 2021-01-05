@@ -351,7 +351,7 @@ defmodule ExDwolla.FundingSources do
     do: Core.get_request("/funding-sources/#{funding_source_id}/micro-deposits")
 
   @spec verify_microdeposits(id(), Map.t()) :: response()
-  def verify_microdeposits(funding_source_id, %{amount1: _, amount2: _} = amounts),
+  def verify_microdeposits(funding_source_id, amounts),
     do: Core.update_request("/funding-sources/#{funding_source_id}/micro-deposits", amounts)
 end
 
