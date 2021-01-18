@@ -70,7 +70,7 @@ defmodule ExDwolla.AuthStore do
       {'Authorization', 'Basic ' ++ to_charlist(credentials)}
     ]
 
-    with {:ok, {{_, 200, _status}, _headers, body}} =
+    with {:ok, {{_, 200, _status}, _headers, body}} <-
            Application.http_client().request(
              :post,
              {url, headers, 'application/x-www-form-urlencoded', 'grant_type=client_credentials'},
