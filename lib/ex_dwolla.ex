@@ -303,7 +303,7 @@ defmodule ExDwolla.Customers do
   @type upload_document_request :: %{
           customer_id: String.t(),
           filename: String.t(),
-          path: String.t(),
+          path_or_binary: binary(),
           document_type: String.t()
         }
 
@@ -312,11 +312,11 @@ defmodule ExDwolla.Customers do
   def upload_document(%{
         customer_id: customer_id,
         filename: filename,
-        path: path,
+        path_or_binary: path_or_binary,
         document_type: document_type
       }),
       do:
-        Core.upload_document_request("/customers/#{customer_id}/documents", filename, path, %{
+        Core.upload_document_request("/customers/#{customer_id}/documents", filename, path_or_binary, %{
           documentType: document_type
         })
 end
