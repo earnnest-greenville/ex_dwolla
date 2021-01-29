@@ -102,8 +102,8 @@ defmodule ExDwolla.Core do
 
   def upload_document_request(path, filename, file_path_or_binary, extra_data) do
     {:ok, file} =  case File.read(file_path_or_binary) do
-      {:ok, file} -> {:ok, file}
-      {:error, :enoent} -> {:ok, file_path_or_binary}
+      {:ok, read_file} -> {:ok, read_file}
+      {:error, :badarg} -> {:ok, file_path_or_binary}
       error -> error
     end
 
