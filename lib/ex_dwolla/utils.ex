@@ -17,6 +17,7 @@ defmodule ExDwolla.Utils do
   @doc since: "0.0.1"
   def base_api_domain(environment)
   def base_api_domain("dev"), do: "api-sandbox.dwolla.com"
+  def base_api_domain("test"), do: "api-sandbox.dwolla.com"
   def base_api_domain(_), do: "api.dwolla.com"
 
   @doc """
