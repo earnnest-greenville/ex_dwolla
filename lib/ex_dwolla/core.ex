@@ -101,13 +101,8 @@ defmodule ExDwolla.Core do
   end
 
   def upload_document_request(path, filename, file_path_or_binary, extra_data) do
-    {:ok, file} =  case File.read(file_path_or_binary) do
-      {:ok, read_file} -> {:ok, read_file}
-      {:error, :badarg} -> {:ok, file_path_or_binary}
-      error -> error
-    end
-
-    with {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
+    with {:ok, file} <- File.read(file_path_or_binary),
+         {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
          content_type <- "multipart/form-data; boundary=#{boundary}",
          {:ok, _body, headers} <-
            base_request(:post, path, [{"Content-Type", content_type}], data, 5, content_type),

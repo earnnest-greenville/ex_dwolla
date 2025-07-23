@@ -61,19 +61,20 @@ defmodule ExDwolla.AuthStore do
          %__MODULE__{environment: environment, key: key, secret: secret} = state
        ) do
     domain = Utils.base_api_domain(environment)
-    url = 'https://' ++ to_charlist(domain) ++ '/token'
+    url = ~c"https://" ++ to_charlist(domain) ++ ~c"/token"
 
     credentials = Base.encode64("#{key}:#{secret}")
 
     headers = [
-      {'Content-Type', 'application/x-www-form-urlencoded'},
-      {'Authorization', 'Basic ' ++ to_charlist(credentials)}
+      {~c"Content-Type", ~c"application/x-www-form-urlencoded"},
+      {~c"Authorization", ~c"Basic " ++ to_charlist(credentials)}
     ]
 
     with {:ok, {{_, 200, _status}, _headers, body}} <-
            Application.http_client().request(
              :post,
-             {url, headers, 'application/x-www-form-urlencoded', 'grant_type=client_credentials'},
+             {url, headers, ~c"application/x-www-form-urlencoded",
+              ~c"grant_type=client_credentials"},
              [],
              []
            ),

@@ -316,9 +316,14 @@ defmodule ExDwolla.Customers do
         document_type: document_type
       }),
       do:
-        Core.upload_document_request("/customers/#{customer_id}/documents", filename, path_or_binary, %{
-          documentType: document_type
-        })
+        Core.upload_document_request(
+          "/customers/#{customer_id}/documents",
+          filename,
+          path_or_binary,
+          %{
+            documentType: document_type
+          }
+        )
 end
 
 defmodule ExDwolla.FundingSources do
