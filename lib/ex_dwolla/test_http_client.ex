@@ -3,26 +3,26 @@ defmodule ExDwolla.TestHttpClient do
 
   def request(
         :post,
-        {'https://api-sandbox.dwolla.com/token', _headers, _content_type, _body},
+        {~c"https://api-sandbox.dwolla.com/token", _headers, _content_type, _body},
         _http_opts,
         []
       ) do
     {:ok, body} = Jason.encode(%{access_token: "abc", expires_in: 3160, token_type: "test"})
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
+    {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, [], to_charlist(body)}}
   end
 
-  def request(:get, {'https://api-sandbox.dwolla.com/', _headers}, _http_opts, []) do
+  def request(:get, {~c"https://api-sandbox.dwolla.com/", _headers}, _http_opts, []) do
     {:ok, body} =
       Jason.encode(%{
         _links: %{account: %{href: "https://api-sandbox.dwolla.com/accounts/some_id"}}
       })
 
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
+    {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, [], to_charlist(body)}}
   end
 
   def request(
         :get,
-        {'https://api-sandbox.dwolla.com/accounts/some_account_id', _headers},
+        {~c"https://api-sandbox.dwolla.com/accounts/some_account_id", _headers},
         _http_opts,
         []
       ) do
@@ -37,36 +37,37 @@ defmodule ExDwolla.TestHttpClient do
     }
 
     {:ok, body} = Jason.encode(data)
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
+    {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, [], to_charlist(body)}}
   end
 
   def request(
         :post,
-        {'https://api-sandbox.dwolla.com/funding-sources', _headers, _content_type,
+        {~c"https://api-sandbox.dwolla.com/funding-sources", _headers, _content_type,
          "{\"accountNumber\":\"1\",\"bankAccountType\":\"checking\",\"routingNumber\":\"1\"}"},
         _http_opts,
         _opts
       ) do
     {:ok,
-     {{'HTTP/1.1', 201, 'OK'},
-      [{'location', 'https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id'}], ""}}
+     {{~c"HTTP/1.1", 201, ~c"OK"},
+      [{~c"location", ~c"https://api-sandbox.dwolla.com/funding-sources/new_funding_source_id"}],
+      ""}}
   end
 
   def request(
         :post,
-        {'https://api-sandbox.dwolla.com/customers', _headers, _content_type,
+        {~c"https://api-sandbox.dwolla.com/customers", _headers, _content_type,
          "{\"firstName\":\"Earnnest\",\"lastName\":\"Developer\"}"},
         _http_opts,
         _opts
       ) do
     {:ok,
-     {{'HTTP/1.1', 201, 'OK'},
-      [{'location', 'https://api-sandbox.dwolla.com/customers/new_customer_id'}], ""}}
+     {{~c"HTTP/1.1", 201, ~c"OK"},
+      [{~c"location", ~c"https://api-sandbox.dwolla.com/customers/new_customer_id"}], ""}}
   end
 
   def request(
         :get,
-        {'https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false',
+        {~c"https://api-sandbox.dwolla.com/accounts/some_account_id/funding-sources?removed=false",
          _headers},
         _http_opts,
         []
@@ -99,6 +100,6 @@ defmodule ExDwolla.TestHttpClient do
     }
 
     {:ok, body} = Jason.encode(data)
-    {:ok, {{'HTTP/1.1', 200, 'OK'}, [], to_charlist(body)}}
+    {:ok, {{~c"HTTP/1.1", 200, ~c"OK"}, [], to_charlist(body)}}
   end
 end
