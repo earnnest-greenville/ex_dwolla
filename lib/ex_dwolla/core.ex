@@ -101,7 +101,7 @@ defmodule ExDwolla.Core do
   end
 
   def upload_document_request(path, filename, file_path_or_binary, extra_data) do
-    with {:ok, file} <- File.read(file_path_or_binary),
+    with {:ok, file} <- get_file_content(file_path_or_binary),
          {boundary, data} <- format_multipart_data("file", filename, file, extra_data),
          content_type <- "multipart/form-data; boundary=#{boundary}",
          {:ok, _body, headers} <-
@@ -109,6 +109,14 @@ defmodule ExDwolla.Core do
          {:ok, location} <- Utils.get_location_from_headers(headers) do
       id = location |> String.split("/") |> Enum.at(-1)
       {:ok, id}
+    end
+  end
+
+  defp get_file_content(file_path_or_binary) do
+    case File.read(file_path_or_binary) do
+      {:ok, content} -> {:ok, content}
+      {:error, :badarg} -> {:ok, file_path_or_binary}
+      error -> error
     end
   end
 
