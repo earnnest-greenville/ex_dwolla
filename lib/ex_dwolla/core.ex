@@ -186,7 +186,13 @@ defmodule ExDwolla.Core do
     boundary = "-------------------------" <> UUID.uuid4()
     line_separator = "\r\n"
     start = "--#{boundary}"
-    mime_type = filename |> String.split(".") |> Enum.at(-1) |> mime_type!()
+
+    mime_type =
+      filename
+      |> Path.extname()
+      |> String.trim_leading(".")
+      |> String.downcase()
+      |> mime_type!()
 
     base_body =
       extra_data
@@ -236,10 +242,10 @@ defmodule ExDwolla.Core do
   defp mime_type!("pdf"), do: "application/pdf"
 
   defp mime_type!("jpg"), do: "image/jpeg"
-
   defp mime_type!("jpeg"), do: "image/jpeg"
+  defp mime_type!("jfif"), do: "image/jpeg"
 
   defp mime_type!("png"), do: "image/png"
 
-  defp mime_type!(_), do: raise("Unsupported File Type!")
+  defp mime_type!(ext), do: raise("Unsupported File Type: '#{ext}'")
 end
