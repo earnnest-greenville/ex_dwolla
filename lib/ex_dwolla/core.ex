@@ -43,7 +43,7 @@ defmodule ExDwolla.Core do
     r = perform_request(method, url, all_headers, body, content_type)
 
     case r do
-      {:ok, {{_, 201, _}, headers, ""}} ->
+      {:ok, {{_, 201, _}, headers, _body}} ->
         {:ok, %{}, Utils.to_strings(headers)}
 
       {:ok, {{_, 200, _}, headers, response_body}} ->
@@ -109,6 +109,13 @@ defmodule ExDwolla.Core do
          {:ok, location} <- Utils.get_location_from_headers(headers) do
       id = location |> String.split("/") |> Enum.at(-1)
       {:ok, id}
+    else
+      {:error, {_status, %{code: "DuplicateResource", _links: %{about: %{href: href}}}}} ->
+        id = href |> String.split("/") |> Enum.at(-1)
+        {:ok, id}
+
+      other ->
+        other
     end
   end
 
