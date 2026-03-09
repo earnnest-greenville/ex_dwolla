@@ -115,6 +115,7 @@ defmodule ExDwolla.Core do
         {:ok, id}
 
       other ->
+        Logger.warning("Unexpected result in upload_document_request: #{inspect(other)}")
         other
     end
   end
