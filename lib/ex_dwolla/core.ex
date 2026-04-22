@@ -120,6 +120,12 @@ defmodule ExDwolla.Core do
     end
   end
 
+  defp get_file_content({:contents, file_contents}) when is_binary(file_contents),
+    do: {:ok, file_contents}
+
+  defp get_file_content({:path, file_path}) when is_binary(file_path),
+    do: File.read(file_path)
+
   defp get_file_content(file_path_or_binary) do
     case File.read(file_path_or_binary) do
       {:ok, content} -> {:ok, content}
