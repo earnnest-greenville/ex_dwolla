@@ -303,7 +303,7 @@ defmodule ExDwolla.Customers do
   @type upload_document_request :: %{
           customer_id: String.t(),
           filename: String.t(),
-          path_or_binary: binary(),
+          path_or_binary: binary() | {:contents, binary()} | {:path, String.t()},
           document_type: String.t()
         }
 
